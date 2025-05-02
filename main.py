@@ -16,6 +16,9 @@ async def on_ready():
 @bot.command(name="ping")
 async def ping(ctx):
     await ctx.send("Pong!")
+@bot.command(name="ddededodediamante")
+async def ddededodediamante(ctx):
+    await ctx.message.reply("ddededodediamante")
 @bot.event
 async def on_message(message):
     if bot.user.mentioned_in(message) and message.author != bot.user:
