@@ -19,6 +19,12 @@ async def ping(ctx):
 @bot.command(name="ddededodediamante")
 async def ddededodediamante(ctx):
     await ctx.message.reply("ddededodediamante")
+@bot.command(name="sync")
+async def sync(ctx):
+    if ctx.author.id == 1246624937066758167:
+        await ctx.send("Syncing...")
+        await bot.tree.sync()
+        await ctx.send("Synced!")
 @bot.event
 async def on_message(message):
     if bot.user.mentioned_in(message) and message.author != bot.user:
@@ -27,9 +33,12 @@ async def on_message(message):
         await message.add_reaction("🇭")
         await message.add_reaction("🇺")
         await message.add_reaction("🇹")
-
+    await bot.process_commands(message)
+@bot.tree.command(name="test", description="this is a test slash command.")
+async def test(interaction: discord.Interaction, input: int): # input which requires you give an integer
+    await interaction.response.send_message(f"You input {input}.")
 
 
     
-    await bot.process_commands(message)
+    
 bot.run(TOKEN)
