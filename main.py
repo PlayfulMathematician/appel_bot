@@ -28,7 +28,5 @@ async def on_message(message):
 
 
     
-    # Process commands (if there are any)
     await bot.process_commands(message)
-# Run the bot
 bot.run(TOKEN)
