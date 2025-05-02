@@ -65,14 +65,14 @@ async def on_ready():
     print(f"Using emoji: {appel_emoji}")
     check_new_run.start()
 
-@bot.command(name="latest_run")
-async def latest_run(ctx):
+@bot.tree.command(name="latest_run", description="latest_run command")
+async def latest_run(interaction: discord.Interaction):
     run = fetch_latest_run()
     if not run:
-        await ctx.send("No runs found for the specified game.")
+        await interaction.response.send_message("No runs found for the specified game.")
         return
     link = extract_link(run)
-    await ctx.send(f"**Latest Run!**\n{link}")
+    await interaction.response.send_message(f"**Latest Run!**\n{link}")
 
 @bot.command(name="sync")
 async def sync(ctx):
