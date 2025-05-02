@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+amount = 2
+
 load_dotenv()
 TOKEN = os.getenv("TESTING_BOT_TOKEN")
 
@@ -24,7 +26,7 @@ async def on_ready():
 
 @bot.command(name="sync")
 async def sync(ctx):
-    if ctx.author.id == 1246624937066758167:
+    if ctx.author.id == 1246624937066758167 or ctx.author.id == 997270873847382126:
         await ctx.send("Syncing...")
         await bot.tree.sync()
         await ctx.send("Synced!")
@@ -53,12 +55,12 @@ async def on_reaction_add(reaction, user):
 
     users = [u async for u in reaction.users() if not u.bot]
 
-    if len(users) == 2:
+    if len(users) == amount:
         original = reaction.message
         content = original.content if original.content else "[no text content]"
 
         # Forward the message content and mention the original user
-        forwarded_message = f"{appel_emoji} x2\nFrom: {original.author.mention}\n{content}"
+        forwarded_message = f"{appel_emoji} x{amount}\nFrom: {original.author.mention}\n{content}"
 
         # Check if the original message has any attachments
         if original.attachments:
