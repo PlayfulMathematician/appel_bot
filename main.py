@@ -20,7 +20,13 @@ async def ping(ctx):
 async def on_message(message):
     if bot.user.mentioned_in(message) and message.author != bot.user:
         
-        await message.add_reaction("😡")
+        await message.add_reaction("🇸")
+        await message.add_reaction("🇭")
+        await message.add_reaction("🇺")
+        await message.add_reaction("🇹")
+
+
+
     
     # Process commands (if there are any)
     await bot.process_commands(message)
