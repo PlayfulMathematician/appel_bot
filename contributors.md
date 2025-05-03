@@ -1,2 +1,2 @@
 ## Contributors
-Bringupyourpost, programminguy
+Programminguy made all the sr.c related commands
