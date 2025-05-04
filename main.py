@@ -3,7 +3,7 @@ import requests
 import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-
+import database
 # === Configuration ===
 load_dotenv()
 TOKEN = os.getenv("TESTING_BOT_TOKEN")
@@ -496,42 +496,86 @@ async def on_message(message):
         if message.author.id in [1246624937066758167, 997270873847382126]:
             for emoji in ["⬆️", "😎"]:
                 await message.add_reaction(emoji)
+        elif message.author.id == 1333626818170716305:
+            #make it react p i 3 1 4
+            for emoji in ["🅿️","🇮","3️⃣","1️⃣","4️⃣"]:
+                await message.add_reaction(emoji)
         else:
             for emoji in ["🇸", "🇭", "🇺", "🇹"]:
                 await message.add_reaction(emoji)
     await bot.process_commands(message)
 
-forwarded_messages = set()
-
 @bot.event
-async def on_reaction_add(reaction, user):
-    if user.bot or reaction.emoji != appel_emoji:
-        return
-    message = reaction.message
+async def handle_star_board(reaction, user,message):
 
-    if message.id in forwarded_messages:
+    if user.bot:
         return
-    if message.author == bot.user:
-        return
-    channel = reaction.message.channel
-    guild = channel.guild
-
-    starboard_channel = discord.utils.get(guild.text_channels, name="appelboard")
+    if reaction != None:
+        if reaction.emoji != appel_emoji:
+            return
+        if message.author == bot.user:
+            return
+    edit_message = False
+    if database.get_all_starred_messages(message.id):
+        edit_message = True
     
-    if True or len(users) >= amount:
+    channel = message.channel
+    guild = channel.guild
+    reaction_count = 0
+    if reaction != None:
+        async for _ in reaction.users():
+            reaction_count += 1
+    print(f"✅ count: {reaction_count}")
+    
+    starboard_channel = discord.utils.get(guild.text_channels, name="appelboard")
+    if reaction_count >= 2:
+        m1=f"{reaction_count} <:appel:{appel_emoji.id}> in <#{message.channel.id}> by (<@{message.author.id}>)"
+        if edit_message:
+            star_message = await starboard_channel.fetch_message(database.get_starred_message(message.id)[1])
+            await star_message.edit(content=m1)
+            return
+        
+        star_message= await starboard_channel.send(m1)
+
         embed = discord.Embed(
             description=reaction.message.content,
             color=discord.Color.gold()
         )
-
-        embed.set_author(name=str(reaction.message.author), icon_url=reaction.message.author.display_avatar.url)
+        #embed.set_author(name=str(reaction.message.author), icon_url=reaction.message.author.display_avatar.url)
         embed.add_field(name="", value=f"[Jump to message]({reaction.message.jump_url})")
         if reaction.message.attachments:
             embed.set_image(url=reaction.message.attachments[0].url)
 
-        await starboard_channel.send(embed=embed)
-        forwarded_messages.add(message.id)
+        f1 = await starboard_channel.send(embed=embed)
+        database.remove_starred_message(message.id)
+        database.add_starred_message(message.id, star_message.id, f1.id, channel.id, guild.id, message.author.id, reaction_count)
+    else:
+        if edit_message:
+            star_message = await starboard_channel.fetch_message(database.get_starred_message(message.id)[1])
+            await star_message.delete()
+            star_message_2 = await starboard_channel.fetch_message(database.get_starred_message(message.id)[2])
+            await star_message_2.delete()
+            database.remove_starred_message(message.id)
+        else:
+            return
 
+@bot.event  
+async def on_raw_reaction_add(payload):
+    message = await bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+    reaction = discord.utils.get(message.reactions, emoji=appel_emoji  )
+    print(reaction)
+    user = await bot.fetch_user(payload.user_id)  # G
+    await handle_star_board(reaction, user,message)
+
+@bot.event  
+async def on_raw_reaction_remove(payload):
+    if payload.emoji.id != appel_emoji.id:
+        return
+    message = await bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+    reaction = discord.utils.get(message.reactions, emoji=appel_emoji)
+    user = await bot.fetch_user(payload.user_id)  # G
+    
+    await handle_star_board(reaction, user,message)
 
 # === Run Bot ===
 bot.run(TOKEN)

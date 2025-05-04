@@ -1,2 +1,13 @@
 .env
 .DS_Store
+__pycache__/
+*.db
+*.sqlite
+*.sqlite3
+Thumbs.db
+*.log
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
