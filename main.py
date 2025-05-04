@@ -515,7 +515,7 @@ async def handle_star_board(reaction, user,message):
         if message.author == bot.user:
             return
     edit_message = False
-    if database.get_all_starred_messages(message.id):
+    if database.get_starred_message(message.id):
         edit_message = True
     
     channel = message.channel
