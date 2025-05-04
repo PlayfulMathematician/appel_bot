@@ -527,7 +527,7 @@ async def handle_star_board(reaction, user,message):
     print(f"✅ count: {reaction_count}")
     
     starboard_channel = discord.utils.get(guild.text_channels, name="appelboard")
-    if reaction_count >= 2:
+    if reaction_count >= 4:
         m1=f"{reaction_count} <:appel:{appel_emoji.id}> in <#{message.channel.id}> by (<@{message.author.id}>)"
         if edit_message:
             star_message = await starboard_channel.fetch_message(database.get_starred_message(message.id)[1])
@@ -576,7 +576,9 @@ async def on_raw_reaction_remove(payload):
     await handle_star_board(reaction, user,message)
 @bot.event
 async def on_message_delete(message):
+    print("D")
     if database.get_starred_message(message.id):
+        print("D2")
         starboard_channel = discord.utils.get(message.guild.text_channels, name="appelboard")
         star_message = await starboard_channel.fetch_message(database.get_starred_message(message.id)[1])
         await star_message.delete()
