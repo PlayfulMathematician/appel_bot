@@ -23,7 +23,6 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 session = requests.Session()
 last_run_id = None
 appel_emoji = None
-forwarded_messages = set()
 
 # === Speedrun.com Feature ===
 def fetch_latest_run():
